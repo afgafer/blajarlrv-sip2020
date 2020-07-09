@@ -43,7 +43,7 @@ class RoomController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'file' => 'required|file|image|mimes:jpeg,png,gif,webp',
             'price' => ['required', 'integer', 'min:1'],
-            'bed' => ['required', 'integer', 'min:1'],
+            'cap' => ['required', 'integer', 'min:1'],
             'slot' => ['required', 'integer', 'min:0'],
             'desc' => ['required',],
         ]);
@@ -58,9 +58,8 @@ class RoomController extends Controller
         }
         $room->slot=$request->slot;
         $room->price=$request->price;
-        $room->bed=$request->bed;
+        $room->cap=$request->cap;
         $room->desc=$request->desc;
-        //$room->admins_id=auth()->user()->id;
         $room->hotel_id=$hotel_id;
         $room->save();
         $msg="The rooom ".$room->name." has been stored";
@@ -104,6 +103,15 @@ class RoomController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $this->validate($request,[
+            'name' => ['required', 'string', 'max:255'],
+            'file' => 'file|image|mimes:jpeg,png,gif,webp',
+            'price' => ['required', 'integer', 'min:1'],
+            'cap' => ['required', 'integer', 'min:1'],
+            'slot' => ['required', 'integer', 'min:0'],
+            'desc' => ['required',],
+        ]);
+        
         $room= Room::findOrFail($id);
         $room->name=$request->name;
         $file=$request->file;
@@ -116,7 +124,7 @@ class RoomController extends Controller
         }
         $room->slot=$request->slot;
         $room->price=$request->price;
-        $room->bed=$request->bed;
+        $room->cap=$request->cap;
         $room->desc=$request->desc;
         //$room->hotel_id=$hotel_id;
         $room->save();
@@ -157,43 +165,48 @@ class RoomController extends Controller
     }
     public function search(Request $request){
         $output="";
-        if(true){
+        if($request->ajax()){
+        //if(true){
             $query=$request->get('query');
             $date1=$request->get('date1');
             $date2=$request->get('date2');
             if($query!=''){
                 $end=date('Y-m-d', strtotime("-1 days", strtotime($date2)));
-                $where="order_room.id IN(SELECT order_room.id FROM orders inner join order_room on orders.id=order_room.order_id where ((('".$date1."' BETWEEN cin and subdate(cout,1)) OR (cin BETWEEN '".$date1."' AND '".$end."')) AND (status!='4'))) AND (rooms.name like '%$query%') ";
-                $where2="rooms.id NOT IN(SELECT order_room.room_id FROM orders inner join order_room on orders.id=order_room.order_id where ((('".$date1."' BETWEEN cin and subdate(cout,1)) OR (cin BETWEEN '".$date1."' AND '".$end." ')) AND (status!='4'))) AND (rooms.phname like '%$query%')";
-                $union= DB::table('rooms')->selectRaw('rooms.*,slot-SUM(qty) AS quota')
+
+                $where="order_room.id IN(SELECT order_room.id FROM orders inner join order_room on orders.id=order_room.order_id where ((('".$date1."' BETWEEN cin and subdate(cout,1)) OR (cin BETWEEN '".$date1."' AND '".$end."')) AND (status!='4'))) AND ((rooms.name like '%$query%') OR (hotels.name like '%$query%')) ";
+                $where2="rooms.id NOT IN(SELECT order_room.room_id FROM orders inner join order_room on orders.id=order_room.order_id where ((('".$date1."' BETWEEN cin and subdate(cout,1)) OR (cin BETWEEN '".$date1."' AND '".$end." ')) AND (status!='4'))) AND ((rooms.name like '%$query%') OR (hotels.name like '%$query%'))";
+
+                $union= DB::table('rooms')->selectRaw('rooms.*, hotels.name AS nHotel,slot-SUM(qty) AS quota')
                 ->join('order_room','rooms.id','=','order_room.room_id')
+                ->join('hotels','rooms.hotel_id','=','hotels.id')
                 ->whereRaw($where)
                 ->groupBy('rooms.id')
                 ->havingRaw("slot-SUM(qty)>0");
-                //->get();
-                $rooms=  DB::table('rooms')->selectRaw("*, slot as quota")
+                $rooms=  DB::table('rooms')->selectRaw("rooms.*, hotels.name AS nHotel, slot as quota")
+                ->join('hotels','rooms.hotel_id','=','hotels.id')
                 ->whereRaw($where2)
                 ->groupBy('rooms.id')
                 ->union($union)
                 ->get();
-                
             }else{
                 $end=date('Y-m-d', strtotime("-1 days", strtotime($date2)));
+
                 $where="order_room.id IN(SELECT order_room.id FROM orders inner join order_room on orders.id=order_room.order_id where (('".$date1."' BETWEEN cin and subdate(cout,1)) OR (cin BETWEEN '".$date1."' AND '".$end."')) AND (status!='4')) ";
                 $where2="rooms.id NOT IN(SELECT order_room.room_id FROM orders inner join order_room on orders.id=order_room.order_id where (('".$date1."' BETWEEN cin and subdate(cout,1)) OR (cin BETWEEN '".$date1."' AND '".$end." ')) AND (status!='4')) ";
-                $union= DB::table('rooms')->selectRaw('rooms.*,slot-SUM(qty) AS quota')
+
+                $union= DB::table('rooms')->selectRaw('rooms.*, hotels.name AS nHotel, slot-SUM(qty) AS quota')
                 ->join('order_room','rooms.id','=','order_room.room_id')
+                ->join('hotels','hotel_id','=','hotels.id')
                 ->whereRaw($where)
                 ->groupBy('rooms.id')
                 ->havingRaw("slot-SUM(qty)>0");
-                //->get();
-                $rooms=  DB::table('rooms')->selectRaw("*, slot as quota")
+                $rooms=  DB::table('rooms')->selectRaw("rooms.*, hotels.name AS nHotel, slot as quota")
+                ->join('hotels','hotel_id','=','hotels.id')
                 ->whereRaw($where2)
                 ->groupBy('rooms.id')
                 ->havingRaw("quota>0")
                 ->union($union)
                 ->get();
-                
             }
             if($rooms->count()>0){
                 foreach($rooms as $r){
@@ -203,7 +216,7 @@ class RoomController extends Controller
 
                     $output.="
                     <div class='card p-0'>
-                        <a class='text-dark' href='".route('order.room',$r->id)."'>
+                        <a class='text-dark' href='".route('room.showA',$r->id)."'>
                         <img src='$src' class='card-img-top' alt='$r->file'>
                         <div class='card-body'>
                             <h5 class='card-title text-white badge badge-primary'>No$r->id</h5>
@@ -211,15 +224,19 @@ class RoomController extends Controller
                             <table class='table table-sm bg-white mb-2 '>
                                 <tbody>
                                     <tr>
-                                        <td >Name</td>
+                                        <td>Name</td>
                                         <td>: $r->name</td>
                                     </tr>
                                     <tr>
-                                        <td>bed</td>
-                                        <td>: $r->bed</td>
+                                        <td>hotel</td>
+                                        <td>: $r->nHotel</td>
                                     </tr>
                                     <tr>
-                                        <td>quota</td>
+                                        <td>capacity</td>
+                                        <td>: $r->cap</td>
+                                    </tr>
+                                    <tr>
+                                        <td>available</td>
                                         <td>: $r->quota</td>
                                     </tr>
                                 </tbody>
@@ -244,44 +261,25 @@ class RoomController extends Controller
         }
         echo json_encode($data);
     }
+    public function roomS($id)
+    {
+        $cin=date('Y-m-d');
+        $end=date('Y-m-d');
+        // $cin='2020-07-3';
+        // $end='2020-07-11';
+        
+        $where1="( ('".$cin."' BETWEEN cin and subdate(cout,1)) OR (cin BETWEEN '".$cin."' AND '".$end."') )
+        AND (status!='2' AND status!='4')
+        AND order_room.room_id=$id
+        ";
+        $check=DB::table('orders')->selectRaw('sum(qty) as used ')
+        ->join('order_room','orders.id','=','order_room.order_id')
+        ->whereRaw($where1)
+        ->first();
+        $room=Room::findOrFail($id);
+
+        $quota=$room->slot - $check->used;
+        return view('auth.room.roomS', compact('room','quota'));
+    }
 }
 
-// @foreach($rooms as $r)
-// @php
-// if(Session::has('cart')){
-//     $cart=Session::get('cart');
-//     if (array_key_exists($r->id,$cart->items)){
-//         continue;
-//     }
-// }
-// $dirF='upload/img/'.$r->file;
-// $src=asset($dirF);
-// $price=number_format($r->price,0,',','.');
-// //dd();
-// @endphp
-// <div class="card p-0">
-//     <a class="text-dark" href="{{route('order.room',$r->id)}}">
-//     <img src="{{$src}}" class="card-img-top" alt="{{$r->file}}">
-//     <div class="card-body">
-//         <h5 class="card-title text-white badge badge-primary">No {{$r->id}}</h5>
-//         <h5 class="card-title border badge badge-light">Rp {{$r->price}}</h5>
-//         <table class="table table-sm bg-white mb-2 ">
-//             <tbody>
-//                 <tr>
-//                     <td >Name</td>
-//                     <td>: {{$r->name}}</td>
-//                 </tr>
-//                 <tr>
-//                     <td>bed</td>
-//                     <td>: {{$r->bed}}</td>
-//                 </tr>
-//                 <tr>
-//                     <td>quota</td>
-//                     <td>: {{$r->quota}}</td>
-//                 </tr>
-//             </tbody>
-//         </table>
-//     </div>
-//     </a>
-// </div>
-// @endforeach

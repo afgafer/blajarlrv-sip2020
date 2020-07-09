@@ -22,7 +22,7 @@ class CreateOrdersRoomsTable extends Migration
             $table->string('name',33);
             $table->integer('qty')->unsigned();
             $table->integer('cost');
-            $table->timestamps();
+            //$table->timestamps();
         });
     }
 

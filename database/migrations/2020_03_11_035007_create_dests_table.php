@@ -17,13 +17,13 @@ class CreateDestsTable extends Migration
             $table->bigIncrements('id');
             $table->string('name',33);
             $table->string('file',100)->nullable();
-            $table->string('contact',13);
+            $table->char('contact',12);
             $table->text('address');
             $table->float('lat',10,6)->nullable();
             $table->float('lng',10,6)->nullable();
             $table->text('desc')->nullable();
             //$table->bigInteger('id_user')->unsigned()->unique();
-            $table->timestamps();;
+            // $table->timestamps();;
         });
     }
 

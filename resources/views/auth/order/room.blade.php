@@ -18,10 +18,10 @@
                                 <td>: {{$room->price}}</td>
                             </tr>
                             <tr>
-                                <td>bed</td>
-                                <td>: {{$room->bed}}</td>
+                                <td>cap</td>
+                                <td>: {{$room->cap}}</td>
                                 <td>quota</td>
-                                <td>: {{$room->quota}}</td>
+                                <td>: {{$quota}}</td>
                             </tr>
                         </tbody>
                     </table>

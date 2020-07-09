@@ -5,10 +5,11 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\User;
 use App\models\Admin;
-use App\models\member;
+use App\models\Member;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 
 class RegisterController extends Controller
 {
@@ -66,23 +67,30 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        $type='0';
-        $result=User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'contact' => $data['contact'], //hmm
-            'type' => $type, //hmm
-            'password' => Hash::make($data['password']),
-        ]);
-        if($result){
-            $user=User::where('email',$data['email'])->first();
-            Member::create([
+        DB::beginTransaction();
+        try{
+            $type='0';
+            $result=User::create([
                 'name' => $data['name'],
                 'email' => $data['email'],
-                'user_id' => $user->id,
+                'contact' => $data['contact'], //hmm
+                'type' => $type, //hmm
+                'password' => Hash::make($data['password']),
             ]);
+            if($result){
+                $user=User::where('email',$data['email'])->first();
+                Member::create([
+                    'name' => $data['name'],
+                    'file' => 'default.jpg',
+                    'user_id' => $user->id,
+                ]);
+            }
+            DB::commit();
+            return $result;
+        } catch (\Exception $e) {
+            DB::rollback();
+            return $result;
         }
-        return $result;
     }
 }
 

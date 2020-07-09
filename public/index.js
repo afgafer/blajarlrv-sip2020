@@ -10,7 +10,7 @@ $(document).ready(function() {
 
     function geoLocationInit() {
         if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(success, fail);
+            navigator.geolocation.watchPosition(success, fail);
         } else {
             alert("Browser not supported");
         }

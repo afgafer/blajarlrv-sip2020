@@ -1,18 +1,22 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">{{ __('Register') }}</div>
-
+<div class="row">
+        <div class="col-12 text-center mb-2">
+            <h1>register</h1>
+        </div>
+        <div class="col-md-6 text-center">
+            <img src="{{asset('storage/logo.png')}}" class="w-50" alt="">
+            <img src="{{asset('storage/text.png')}}" class="w-50" alt="">
+        </div>
+        <div class="col-md-6 align-self-center">
+            <div class="card border border-0">
                 <div class="card-body">
                     <form method="POST" action="{{ route('register') }}">
                         @csrf
 
                         <div class="form-group row">
-                            <label for="name" class="col-md-4 col-form-label text-md-right">{{ __('name') }}</label>
+                            <label for="name" class="col-md-4 col-form-label text-md-left">{{ __('name') }}</label>
 
                             <div class="col-md-6">
                                 <input id="name" type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}" required autocomplete="name" autofocus>
@@ -26,7 +30,7 @@
                         </div>
 
                         <div class="form-group row">
-                            <label for="email" class="col-md-4 col-form-label text-md-right">{{ __('E-Mail Address') }}</label>
+                            <label for="email" class="col-md-4 col-form-label text-md-left">{{ __('E-Mail Address') }}</label>
 
                             <div class="col-md-6">
                                 <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email">
@@ -40,7 +44,7 @@
                         </div>
 
                         <div class="form-group row">
-                            <label for="contact" class="col-md-4 col-form-label text-md-right">phone number</label>
+                            <label for="contact" class="col-md-4 col-form-label text-md-left">phone number</label>
 
                             <div class="col-md-6">
                                 <input id="contact" type="nuumber" class="form-control @error('contact') is-invalid @enderror" name="contact" value="{{ old('contact') }}" required autocomplete="contact">
@@ -54,7 +58,7 @@
                         </div>
 
                         <div class="form-group row">
-                            <label for="password" class="col-md-4 col-form-label text-md-right">{{ __('Password') }}</label>
+                            <label for="password" class="col-md-4 col-form-label text-md-left">{{ __('Password') }}</label>
 
                             <div class="col-md-6">
                                 <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="new-password">
@@ -68,7 +72,7 @@
                         </div>
 
                         <div class="form-group row">
-                            <label for="password-confirm" class="col-md-4 col-form-label text-md-right">{{ __('Confirm Password') }}</label>
+                            <label for="password-confirm" class="col-md-4 col-form-label text-md-left">{{ __('Confirm Password') }}</label>
 
                             <div class="col-md-6">
                                 <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required autocomplete="new-password">
@@ -85,7 +89,6 @@
                     </form>
                 </div>
             </div>
-        </div>
+        </div>    
     </div>
-</div>
 @endsection

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\models\Hotel;
 use App\models\Room;
+use App\models\Dest;
 use Illuminate\Http\Request;
 use File;
 use Illuminate\Support\Facades\DB;
@@ -17,9 +18,8 @@ class HotelController extends Controller
      */
     public function index()
     {
-        //$hotels=Hotel::orderBy('name','ASC')->get();
-        $hotel_id=Auth()->user()->admin->hotel_id;
-        $hotels=Hotel::where('id',$hotel_id)->get();
+        $dest_id=Auth()->user()->admin->dest_id;
+        $hotels=Hotel::where('dest_id',$dest_id)->get();
         return view('hotel.index',compact('hotels'));
     }
 
@@ -30,7 +30,8 @@ class HotelController extends Controller
      */
     public function create()
     {
-        return view('hotel.create');
+        $dests=Dest::all();
+        return view('hotel.create',compact('dests'));
     }
 
     /**
@@ -41,6 +42,15 @@ class HotelController extends Controller
      */
     public function store(Request $request)
     {
+        $this->validate($request,[
+            'name' => ['required', 'string', 'max:255'],
+            'file' => 'required|file|image|mimes:jpeg,png,gif,webp',
+            'contact' => ['required', 'string', 'size:12'], 
+            'address' => 'required',
+            'desc' => 'required',
+            'lat'=>['numeric','nullable'],
+            'lng'=>'nullable|numeric',
+        ]);
         $hotel=new Hotel();
         $hotel->name=$request->name;
         $file=$request->file;
@@ -54,10 +64,11 @@ class HotelController extends Controller
         $hotel->lat=$request->lat;
         $hotel->lng=$request->lng;
         $hotel->desc=$request->desc;
+        $hotel->dest_id=auth()->user()->admin->dest_id;
         $hotel->save();
         $msg="The hotel ".$hotel->name." has been saved";
 
-        return redirect()->route('hotel.index')->with('message',$msg);
+        return redirect()->route('hotel.index')->with('msg',$msg);
     }
 
     /**
@@ -93,6 +104,15 @@ class HotelController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $this->validate($request,[
+            'name' => ['required', 'string', 'max:255'],
+            'file' => 'file|image|mimes:jpeg,png,gif,webp',
+            'contact' => ['required', 'string', 'size:12'], 
+            'address' => 'required',
+            'desc' => 'required',
+            'lat'=>['numeric','nullable'],
+            'lng'=>'nullable|numeric',
+        ]);
         $hotel=Hotel::findOrFail($id);
         $hotel->name=$request->name;
         $file=$request->file;
@@ -111,7 +131,7 @@ class HotelController extends Controller
         $hotel->save();
         $msg="The hotel ".$hotel->name." has been saved";
 
-        return redirect()->route('hotel.index')->with('message',$msg);
+        return redirect()->route('hotel.show',$id)->with('msg',$msg);
     }
 
     /**
@@ -125,10 +145,9 @@ class HotelController extends Controller
         $hotel=Hotel::findOrFail($id);
         $oldF='upload/img/'.$hotel->file;
         File::delete($oldF);
-        Hotel::hotelroy($id);
-        //foreach($hotel->room as $)
+        Hotel::destroy($id);
         $msg="The hotel ".$hotel->name." has been deleted";
-        return redirect()->route('hotel.index')->with('message',$msg);
+        return redirect()->route('hotel.index')->with('msg',$msg);
     }
 
     public function indexA()
@@ -137,20 +156,8 @@ class HotelController extends Controller
         return view('auth.hotel.index',compact('hotels'));
     }
 
-    
-    public function indexJ()
-    {
-        $hotels=Hotel::orderBy('name','ASC')->get();
-        return $hotels;
-    }
-
     public function map(){
-        return view('auth.hotel.map');
-    }
-
-    public function showJ($id)
-    {
-        $hotel=Hotel::findOrFail($id);
-        return $hotel;
+        $hotels=Hotel::get();
+        return view('auth.hotel.map', compact('hotels'));
     }
 }

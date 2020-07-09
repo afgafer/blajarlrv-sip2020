@@ -1,12 +1,12 @@
 @extends('layouts.app')
 @section('content')
-
+<h1 class="title">events</h1>
+<hr>
 @if ($message = Session::get('message'))
  <div class="alert alert-success martop-sm">
  <p>{{ $message }}</p>
  </div>
 @endif
-<h1 class="title">events</h1>
 <a href="{{route('event.create')}}" class="btn btn-primary btn-sm">create</a>
 <div class="scroll">
     <table class="table table-sm bg-white mb-2 ">
@@ -22,7 +22,7 @@
             @php
             $dirF='upload/img/'.$e->file;
             $src=asset($dirF);
-            $time=date_create($e->created_at);
+            $time=date_create($e->date);
             $date=date_format($time,'d-m-Y');
             $content=substr($e->content,0,500);
             @endphp

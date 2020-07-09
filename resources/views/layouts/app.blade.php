@@ -26,17 +26,19 @@
 
     <!-- style -->
     <link href="{{ asset('style/afstyle.css') }}" rel="stylesheet">
+    <!-- <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,700"> -->
     @yield('head')
 </head>
 
 <body>
     <img class="position-fixed w-100 h-100" src="{{asset('storage/bg.jpg')}}">
     <div id="app">
-        <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm" style="font-size:18pt;">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-blue shadow-sm" style="font-size:18pt;">
             <div class="container">
-                <img src="{{asset('storage/logo.png')}}" class="mr-1 img-s">
+                <img src="{{asset('storage/logo.png')}}" width="50px" >
                 <a class="navbar-brand" href="{{ url('/') }}">
-                    <h2>{{ config('app.name', 'Laravel') }}</h2>
+                    <img src="{{asset('storage/text.png')}}" width="100px" >
+                    <!-- <h2>{{ config('app.name', 'Laravel') }}</h2> -->
                 </a>
                 <!-- <button class="navbar-toggler" type="button" data-toggle="collapse"
                     data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
@@ -50,19 +52,59 @@
                             <a class="nav-link" href="">home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{route('dest.indexA')}}">dests</a>
+                            <div class="dropdown">
+                                <a class="nav-link dropdown-toggle text-left" href="#" role="button"
+                                    id="dDest" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    dests
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="dDest">
+                                    <a class="dropdown-item" href="{{route('dest.indexA')}}">
+                                        list dest
+                                    </a>
+                                    <a class="dropdown-item" href="{{route('dest.map')}}">
+                                        map
+                                    </a>
+                                </div>
+                            </div>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{route('hotel.indexA')}}">hotels</a>
+                            <div class="dropdown">
+                            <a class="nav-link dropdown-toggle text-left" href="#" role="button"
+                                id="dHotel" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                hotels
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="dHotel">
+                                <a class="dropdown-item" href="{{route('hotel.indexA')}}">
+                                    list hotel
+                                </a>
+                                <a class="dropdown-item" href="{{route('hotel.map')}}">
+                                    map
+                                </a>
+                            </div>
+                        </div>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{route('room.indexA')}}">rooms</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{route('article.indexA')}}">articles</a>
+                            <div class="dropdown">
+                                <a class="nav-link dropdown-toggle text-left" href="#" role="button"
+                                    id="dRoom" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    rooms
+                                </a>
+
+                                <div class="dropdown-menu" aria-labelledby="dRoom">
+                                    <a class="dropdown-item" href="{{route('room.indexA')}}">
+                                        list room
+                                    </a>
+                                    <a class="dropdown-item" href="{{route('room.check')}}">
+                                        check
+                                    </a>
+                                </div>
+                            </div>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{{route('image.indexA')}}">images</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{route('article.indexA')}}">articles</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{{route('event.indexA')}}">events</a>
@@ -136,7 +178,7 @@
                     $src=asset($dirF);
                     @endphp
                     <div class="dropdown">
-                        <a class="btn btn-info bg-info dropdown-toggle text-white p-0" href="#" role="button"
+                        <a class="btn btn-info bg-info dropdown-toggle text-white p-2 text-left" href="#" role="button"
                             id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <img src="{{$src}}" alt="{{$user->file}}" class="rounded-circle border border-secondary img-s">
                             {{Auth::user()->name}}
@@ -154,7 +196,8 @@
                         </div>
                     </div>
                     @endguest
-
+                    <a href="{{route('home')}}"
+                        class="list-group-item list-group-item-action bg-secondary text-white">home</a>
                     @auth
                     @php
                     if(Auth::user()->type==1){
@@ -168,23 +211,37 @@
                     @endphp
                     
                     @if(Auth::user()->type==1)
+                        @if(Auth::user()->admin->hotel_id>0)
+                        <a href="{{route('admin.show',Auth::user()->id)}}" class="list-group-item list-group-item-action">account</a>
                     <a href="{{route('dest.show',Auth::user()->admin->dest_id)}}"
                         class="list-group-item list-group-item-action">dest</a>
                     <a href="{{route('hotel.show',Auth::user()->admin->hotel_id)}}"
                         class="list-group-item list-group-item-action">hotel</a>
                     <a href="{{route('room.index')}}" class="list-group-item list-group-item-action">room</a>
+                        @else
+                        <a href="{{route('admin.show',Auth::user()->id)}}" class="list-group-item list-group-item-action">account</a>
+                    <a href="{{route('dest.index')}}"
+                        class="list-group-item list-group-item-action">dest</a>
+                    <a href="{{route('hotel.index')}}"
+                        class="list-group-item list-group-item-action">hotel</a>
+                    <!-- <a href="{{route('admin.index')}}"
+                        class="list-group-item list-group-item-action">admin</a> -->
+                        @endif
+                    <a href="{{route('image.index')}}" class="list-group-item list-group-item-action">image</a>
                     <a href="{{route('article.index')}}" class="list-group-item list-group-item-action">article</a>
                     <a href="{{route('event.index')}}" class="list-group-item list-group-item-action">event</a>
-                    <a href="{{route('admin.index')}}" class="list-group-item list-group-item-action">user</a>
-                    <a href="{{route('order.transaction')}}"
+                        @if(Auth::user()->admin->hotel_id>0)
+                    <a href="{{route('order.transaction')}}?status=transaction"
                         class="list-group-item list-group-item-action">transaction</a>
-                    <a href="{{route('order.payment')}}" class="list-group-item list-group-item-action">payment</a>
-                    <a href="{{route('order.index')}}" class="list-group-item list-group-item-action">order</a>
+                    <a href="{{route('order.payment')}}?status=payment" class="list-group-item list-group-item-action">payment</a>
+                    <a href="{{route('order.income')}}" class="list-group-item list-group-item-action">order</a>
+                        @endif
 
                     @elseif(Auth::user()->type==0)
-                    <a href="{{route('image.create')}}" class="list-group-item list-group-item-action">image</a>
+                    <a href="{{route('member.show',Auth::user()->id)}}" class="list-group-item list-group-item-action">account</a>
+                    <!-- <a href="{{route('image.createA')}}" class="list-group-item list-group-item-action">Upload</a> -->
                     <a href="{{route('order.indexA')}}" class="list-group-item list-group-item-action">order</a>
-                    <form action="{{route('cart.search')}}" method="post">
+                    <!-- <form action="{{route('cart.search')}}" method="post">
                         {{csrf_field()}}
                         <button type="submit" class="list-group-item list-group-item-action">
                             Pesan
@@ -195,64 +252,58 @@
                             <span class="badge badge-success ml-5">{{$cart->tQty}}</span>
                             @endif
                         </button>
-                    </form>
+                    </form> -->
                     @endif
                     @endauth
-                    <a href="{{route('home')}}"
-                        class="list-group-item list-group-item-action bg-secondary text-white">home</a>
                     <!-- <a href="{{route('dest.indexA')}}"
                         class="list-group-item list-group-item-action bg-secondary text-white">dests</a> -->
                     <div class="dropdown">
-                        <a class="btn btn-secondary bg-secondary dropdown-toggle text-white pl-4 text-left" href="#" role="button"
+                        <a class="list-group-item list-group-item-action bg-secondary dropdown-toggle text-white text-left" href="#" role="button"
                             id="dDest" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            dest
+                            dests
                         </a>
-                        <div class="dropdown-menu bg-secondary border border-light" aria-labelledby="dDest">
-                            <a class="dropdown-item text-white" href="{{route('dest.indexA')}}">
+                        <div class="dropdown-menu" aria-labelledby="dDest">
+                            <a claSS="dropdown-item" href="{{route('dest.indexA')}}">
                                 list dest
                             </a>
-                            <a class="dropdown-item text-white" href="{{route('dest.map')}}">
+                            <a class="dropdown-item" href="{{route('dest.map')}}">
                                 map
                             </a>
                         </div>
                     </div>
-                    <!-- <a href="{{route('hotel.indexA')}}"
-                        class="list-group-item list-group-item-action bg-secondary text-white">hotels</a> -->
                         <div class="dropdown">
-                        <a class="btn btn-secondary bg-secondary dropdown-toggle text-white pl-4 text-left" href="#" role="button"
+                        <a class="list-group-item list-group-item-action bg-secondary dropdown-toggle text-white text-left" href="#" role="button"
                             id="dHotel" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            hotel
+                            hotels
                         </a>
-                        <div class="dropdown-menu bg-secondary border border-light" aria-labelledby="dHotel">
-                            <a class="dropdown-item text-white" href="{{route('hotel.indexA')}}">
+                        <div class="dropdown-menu" aria-labelledby="dHotel">
+                            <a class="dropdown-item" href="{{route('hotel.indexA')}}">
                                 list hotel
                             </a>
-                            <a class="dropdown-item text-white" href="{{route('hotel.map')}}">
+                            <a class="dropdown-item" href="{{route('hotel.map')}}">
                                 map
                             </a>
                         </div>
                     </div>
-                    <a href="{{route('room.indexA')}}"
-                        class="list-group-item list-group-item-action bg-secondary text-white">rooms</a>
-                    <!-- <div class="dropdown">
-                        <a class="btn btn-secondary bg-secondary dropdown-toggle text-white pl-4 text-left" href="#" role="button"
+                    <div class="dropdown">
+                        <a class="list-group-item list-group-item-action bg-secondary dropdown-toggle text-white text-left" href="#" role="button"
                             id="dRoom" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            room
+                            rooms
                         </a>
 
-                        <div class="dropdown-menu bg-secondary border border-light" aria-labelledby="dRoom">
-                            <a class="dropdown-item text-white" href="{{route('room.indexA')}}">
+                        <div class="dropdown-menu" aria-labelledby="dRoom">
+                            <a class="dropdown-item" href="{{route('room.indexA')}}">
                                 list room
                             </a>
-                            <a class="dropdown-item text-white" href="{{route('room.check')}}">
+                            <a class="dropdown-item" href="{{route('room.check')}}">
                                 check
                             </a>
                         </div>
-                    </div> -->
-                    <a href="{{route('article.indexA')}}"
-                        class="list-group-item list-group-item-action bg-secondary text-white">articles</a>
+                    </div>
                     <a href="{{route('image.indexA')}}"
                         class="list-group-item list-group-item-action bg-secondary text-white">images</a>
+                    <a href="{{route('article.indexA')}}"
+                        class="list-group-item list-group-item-action bg-secondary text-white">articles</a>
                     <a href="{{route('event.indexA')}}"
                         class   ="list-group-item list-group-item-action bg-secondary text-white">events</a>
                 </div>
@@ -297,9 +348,9 @@
   </div>
 </div> -->
             <div class="col-md-11 p-2" style="">
-                @yield('header')
+                @yield('top')
             </div>
-            <div class="col-md-11 bg-limpid-light mx-2 rounded" style="">
+            <div class="col-md-11 bg-white mx-2 rounded p-2 pb-3 " style="min-height:60vh">
                 @yield('content')
             </div>
             <div class="col-md-11 p-2 " style="">
@@ -307,8 +358,10 @@
             </div>
         </div>
         <!-- end_body -->
+        <div class="col-12 bg-dark" style="height:200px;">
+                
+        </div>
     </div>
-
     <!-- script -->
     <!-- bootstrap -->
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"

@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\member;
+use App\Models\Member;
 use Illuminate\Http\Request;
+use File;
 
 class MemberController extends Controller
 {
@@ -44,9 +45,10 @@ class MemberController extends Controller
      * @param  \App\member  $member
      * @return \Illuminate\Http\Response
      */
-    public function show(member $member)
+    public function show(member $member,$id)
     {
-        //
+        $member=Member::where('user_id',$id)->firstOrFail();
+        return view('member.show',compact('member'));
     }
 
     /**
@@ -81,5 +83,22 @@ class MemberController extends Controller
     public function destroy(member $member)
     {
         //
+    }
+    public function upload(Request $request,$id){
+        $this->validate($request,[
+            'file'=>'required|file|image|mimes:jpeg,png,gif,webp',
+        ]);
+        $member=Member::findOrFail($id);
+        $file=$request->file;
+        if ($file) {
+            $dirF='upload/img/';
+            $oldF=$dirF.$member->file;
+            File::delete($oldF);
+            $nameF='member_'.time().'.'.$file->getClientOriginalExtension();
+            $file->move($dirF,$nameF);
+            $member->file=$nameF;
+        }
+        $member->save();
+        return back()->with('msg',"Profille's photo has been upload");
     }
 }

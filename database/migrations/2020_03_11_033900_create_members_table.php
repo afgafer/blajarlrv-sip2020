@@ -17,10 +17,10 @@ class CreateMembersTable extends Migration
             $table->bigIncrements('id');
             $table->string('name',33);
             $table->string('file',100)->nullable();
-            $table->string('email')->unique();
-            $table->unsignedBigInteger('user_id');
+            //$table->string('email',100)->unique();
+            $table->unsignedBigInteger('user_id')->unique();
             $table->index('user_id');
-            $table->timestamps();;
+            // $table->timestamps();
         });
     }
 

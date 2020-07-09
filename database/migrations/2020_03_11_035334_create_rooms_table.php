@@ -21,13 +21,13 @@ class CreateRoomsTable extends Migration
             //$table->integer('quota');
             $table->integer('price');
             //$table->enum('status',['kosong','terpesan']);
-            $table->integer('bed');
+            $table->integer('cap')->usigned();
             $table->integer('slot')->unsigned();
             $table->text('desc');
             $table->bigInteger('hotel_id')->unsigned();
             $table->index('hotel_id');
             //$table->foreign('admin_id')->references('id')->on('dests')->onUpdate('cascade')->onDelete('restrict');
-            $table->timestamps();
+            //$table->timestamps();
         });
     }
 

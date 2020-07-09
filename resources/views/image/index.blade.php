@@ -1,39 +1,43 @@
 @extends('layouts.app')
 @section('content')
-        <a class="btn btn-primary" href="{{route('image.create')}}">create</a>
-        <table class="table table-striped table-light table-sm">
-            <thead>
-                <tr class='bg-primary text-white'>
-                    <th>No</th>
-                    <th>name</th>
-                    <th>status</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($images as $i)
-                @php
-                $dirF='upload/img/'.$i->file;
-                $src=asset($dirF);
-                @endphp
-                <tr class=''>
-                    <td>{{$loop->iteration}}</td>
-                    <td><img src="{{$src}}" width='100px' clas="img-thumb" alt="{{$i->file}}"> {{$i->name}}</td>
-                    <td>
-                    <form action="{{route('image.pConfirm',$i->id)}}" method="post">
-                        {{csrf_field()}}
-                        {{method_field('put')}}
-                        <select name="status" class="form-control" onchange="this.form.submit()">
-                            <option disabled selected>--Confirm--</option>
-                            <option value="1">accept</option>
-                            <option value="2">abort</option>
-                        </select>
+<h1 class="title">images</h1>
+<hr>
+<!-- alert -->
+@if ($msg = Session::get('msg'))
+ <div class="alert alert-success martop-sm">
+ <p>{{ $msg }}</p>
+ </div>
+@endif
+<!--end alert -->
+<!-- <a href="{{route('image.create')}}" class="btn btn-primary">create/confirm</a> -->
+<a href="{{route('image.create')}}" class="btn btn-primary">create</a>
+<div class="card-columns">
+            @forelse($images as $i)
+            @php
+            $dirF='upload/img/'.$i->file;
+            $src=asset($dirF);
+            @endphp
+            <div class="box card">
+                <a class="text-white" href="{{route('image.show',$i->id)}}">
+                <img src="{{$src}}" class="card-img-top border border-secondary" alt="{{$i->file}}">
+                <div class="overlay text-left">
+                    <div class="btn-group">
+                        <a href="{{route('image.edit',$i->id)}}" class="btn btn-primary btn-sm mr-1">edit</a>
+                        <form action="{{route('image.destroy',$i->id)}}" method="post">
+                        @csrf
+                        @method('DELETE')
+                            <button class="btn btn-danger btn-sm mr-1" type="submit">delete</button>
                         </form>
-                    </td>
-                </tr>
-                @empty
-                <td colspan="4" class="text-center">empty</td>
-                @endforelse
-            </tbody>
-        </table>
-       
+                    </div>
+                </div>
+                </a>
+            </div>
+            @empty
+            <div class="card p-0">
+                <div class="card-body">
+                    <h5>empty</h5>
+                </div>
+            </div>
+            @endforelse
+</div>
 @endsection

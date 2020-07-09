@@ -40,12 +40,14 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
+        $this->validate($reques,[
+            
+        ]);
         $user=new User();
         $user->name=$request->name;
         $user->email=$request->email;
         $user->contact=$request->contact;
         $user->password=Hash::make($request->password);
-        //$user->dest_id=$request->dest_id;
         $user->type='1';
         $user->save();
 

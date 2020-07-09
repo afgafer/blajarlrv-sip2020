@@ -1,45 +1,50 @@
 @extends('layouts.app')
-@section('head')
-<meta name="csrf-token" content="{{ csrf_token() }}">
-@endsection
 
 @section('content')
-<a href="{{route('order.export')}}" class="btn btn-primary">export</a>
+<!-- <button id="export" class="btn btn-primary">export</button> -->
+@if (Session::get('message'))
 @php
-if(isset($_GET['date1']) and isset($_GET['date2'])){
-    $date1=$_GET['date1'];
-    $date2=$_GET['date2'];
-}else{
-    $date1=date('Y-m-01');
-    $date2=date('Y-m-d');
-}
+$message = Session::get('message');
+@endphp
+ <div class="alert alert-success martop-sm">
+ <p>{{ $message }}</p>
+ </div>
+@endif
+@php
+//if(isset($_GET['date1']) and isset($_GET['date2'])){
+    //$date1=$_GET['date1'];
+    //$date2=$_GET['date2'];
+//}else{
+    $date1=date("Y-m-01");
+    $date2=date("Y-m-t");
+//}
 @endphp
 <div class="form-row">
         <div class="col-md-3">
-            <label for="date1">date1</label>
+            <label for="date1">start date</label>
             <input type="date" id="date1" value='{{$date1}}' class="form-control">
         </div>
         <div class="col-md-3">
-            <label for="date2">date2</label>
+            <label for="date2">end date</label>
             <input type="date" id="date2" value='{{$date2}}' class="form-control">
         </div>
-        <div class="col-1">
+        <div class="col-1 align-self-end">
             <button id="filter" class="btn btn-primary">filter</button>
         </div>
 </div>
-<div class="form-row mb-3">
+<div class="form-row my-3">
         <div class="col-md-3">
-            <input type="text" id="search" class="form-control bg-transparent" style="border-bottom: 1px solid dodgerblue" placeholder="name customer/room">
+            <input type="text" id="search" class="form-control bg-transparent" style="border-bottom: 1px solid dodgerblue" placeholder="name invoice/customer/room">
         </div>
 </div>
-<div class="table-responsive">
-        <table class="table table-sm bg-limpid-light">
+<div class="scroll"  style="width:80vw;">
+        <table class="table table-sm">
             <thead>
-                <tr class='bg-primary text-white'>
-                    <th>No</th>
+                <tr class='bg-dark text-white'>
+                    <th>invoice</th>
                     <th>name</th>
-                    <th>cin</th>
-                    <th>count</th>
+                    <th>check in</th>
+                    <th>qty</th>
                     <th>bill</th>
                     <th>status</th>
                     <th>actions</th>
@@ -67,23 +72,33 @@ if(isset($_GET['date1']) and isset($_GET['date2'])){
     
     $(document).ready(function() {
         fetch();
-            $(document).on('click','#filter',function(){
-                fetch();
-            });
+            
         function fetch(query='') {
+            status="{{$_GET['status']}}";
             query=$('#search').val();
             date1=$('#date1').val();
             date2=$('#date2').val();
             $.ajax({
-                url:"http://localhost:8000/admin/order/search",
+                url:"{{route('order.search')}}",
                 method:'GET',
-                data:{query:query,date1:date1,date2:date2},
+                data:{query:query,date1:date1,date2:date2,status:status},
                 dataType:'json',
                 success: function(data){
-                    $('#tBody').html(data.table_data);
+                    $('#tBody').html(data.tableData);
                 }
             });
         }
+
+        $(document).on('click','#filter',function(){
+                fetch();
+        });
+        $(document).on('click','#export',function(){
+            status="{{$_GET['status']}}";
+            date1=$('#date1').val();
+            date2=$('#date2').val();
+            url="https://afiqragroup.online/admin/order/export?date1="+date1+"&date2="+date2+"&status="+status;
+            window.location = url;
+        });
         $(document).on('keyup','#search',function(){
            var query=$(this).val();
            fetch(query);

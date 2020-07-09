@@ -1,41 +1,38 @@
 @extends('layouts.app')
 @section('content')
-
-@if ($message = Session::get('message'))
+<h1 class="title text-center">hotels</h1>
+<hr>
+@if ($msg = Session::get('msg'))
  <div class="alert alert-success martop-sm">
- <p>{{ $message }}</p>
+ <p>{{ $msg }}</p>
  </div>
 @endif
-<h1 class="title">hotels</h1>
+<!-- card-clumns -->
 <div class="card-columns">
-            @forelse($hotels as $h)
-            @php
-            $dirF='upload/img/'.$h->file;
-            $src=asset($dirF);
-            @endphp
-            <div class="card p-0 bg-transparent">
-                <a class="text-white" href="{{route('hotel.showA',$h->id)}}">
-                <img src="{{$src}}" class="card-img-top" alt="{{$h->file}}">
-                <div class="card-body text-center bg-secondary">
-                    <h5 >{{$h->name}}</h5>
-                    <!-- <div>
-                        <a href="{{route('dest.show',$h->id)}}" class="btn btn-primary btn-sm">read more</a>
-                        <a href="{{route('dest.edit',$h->id)}}" class="btn btn-primary btn-sm">edit</a>
-                        <form action="{{route('dest.destroy',$h->id)}}" method="post">
-                        @csrf
-                        @method('DELETE')
-                            <button class="btn btn-danger btn-sm" type="submit">delete</button>
-                        </form>
-                    </div> -->
-                </div>
-                </a>
+    @forelse($hotels as $h)
+    @php
+    $dirF='upload/img/'.$h->file;
+    $src=asset($dirF);
+    @endphp
+    <!-- box-->
+    <div class="box">
+        <a class="text-white" href="{{route('hotel.showA',$h->id)}}">
+            <img src="{{$src}}" class="card-img-top border border-secondary" alt="{{$h->file}}">
+            <div class="box-title">
+                <h5>{{$h->name}}</h5>
             </div>
-            @empty
-            <div class="card p-0">
-                <div class="card-body">
-                    <h5>empty</h5>
-                </div>
-            </div>
-            @endforelse
+        </a>
+    </div>
+    <!--end box-->
+    @empty
+    <!--card-->
+    <div class="card p-0">
+        <div class="card-body">
+            <h5>empty</h5>
         </div>
+    </div>
+    <!--end card -->
+    @endforelse
+</div>
+<!--end card-clumns -->
 @endsection

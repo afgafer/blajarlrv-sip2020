@@ -1,20 +1,18 @@
 @extends('layouts.app')
 @section('content')
 <div class="bg-limpid-light p-2">
-            <div class="bg-light">
+            <div>
                 <h1 class="title">form</h1>
                 <div class="form-row p-2">
-                    <div class="form-group col-md-6">
-                        <label for="name">name</label>
-                        <input type="text" value="{{Session::get('name')}}" class="form-control" readonly>
-                    </div>
                     <div class="form-group col-md-3">
-                        <label for="cin">cin : 08.00</label>
+                        <label for="cin">check in :</label>
                         <input type="date"  value="{{Session::get('cin')}}" class="form-control" readonly>
+                        <strong>check in 14.00 WIB</strong>
                     </div>
                     <div class="form-group col-md-3">
-                        <label for="cout">cout : 06.00</label>
+                        <label for="cout">check out :</label>
                         <input type="date" value="{{Session::get('cout')}}" class="form-control" readonly>
+                        <strong>check out 12.00 WIB</strong>
                     </div>
                 </div>
             </div>

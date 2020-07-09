@@ -38,6 +38,11 @@ class ArticleController extends Controller
      */
     public function store(Request $request)
     {
+        $this->validate($request,[
+            'title' => ['required', 'string', 'max:255'],
+            'file' => 'required|file|image|mimes:jpeg,png,gif,webp',
+            'content' => 'required',
+        ]);
         $article=new Article();
         $article->title=$request->title;
         $file=$request->file;
@@ -47,7 +52,7 @@ class ArticleController extends Controller
             $article->file=$nameF;
         }
         $article->content=$request->content;
-        $article->admin_id=auth()->user()->id;
+        $article->admin_id=auth()->user()->admin->id;
         $article->save();
         $msg="The article ".$article->name." has been saved";
 
@@ -87,6 +92,11 @@ class ArticleController extends Controller
      */
     public function update(Request $request,$id)
     {
+        $this->validate($request,[
+            'title' => ['required', 'string', 'max:255'],
+            'file' => 'file|image|mimes:jpeg,png,gif,webp',
+            'content' => 'required',
+        ]);
         $article=Article::findOrFail($id);
         $article->title=$request->title;
         $file=$request->file;

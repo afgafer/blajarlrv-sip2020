@@ -37,6 +37,13 @@ class EventController extends Controller
      */
     public function store(Request $request)
     {
+        $this->validate($request,[
+            'name' => ['required', 'string', 'max:255'],
+            'file' => 'required|file|image|mimes:jpeg,png,gif,webp',
+            'date' => 'required|date|after_or_equal:now', 
+            'place' => 'required',
+            'desc' => 'required',
+        ]);
         $event=new Event();
         $event->name=$request->name;
         $file=$request->file;
@@ -88,6 +95,13 @@ class EventController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $this->validate($request,[
+            'name' => ['required', 'string', 'max:255'],
+            'file' => 'file|image|mimes:jpeg,png,gif,webp',
+            'date' => 'required|date|after_or_equal:now', 
+            'place' => 'required',
+            'desc' => 'required',
+        ]);
         $event=Event::findOrFail($id);
         $event->name=$request->name;
         $file=$request->file;

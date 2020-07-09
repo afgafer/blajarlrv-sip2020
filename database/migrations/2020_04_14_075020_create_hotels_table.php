@@ -17,13 +17,14 @@ class CreateHotelsTable extends Migration
             $table->bigIncrements('id');
             $table->string('name',33);
             $table->string('file',100)->nullable();
-            $table->string('contact',13);
+            $table->string('contact',12);
             $table->text('address');
-            $table->float('lat')->nullable();
-            $table->float('lng')->nullable();
+            $table->float('lat',10,6)->nullable();
+            $table->float('lng',10,6)->nullable();
             $table->text('desc')->nullable();
-            //$table->bigInteger('id_user')->unsigned()->unique();
-            $table->timestamps();;
+            $table->unsignedBigInteger('dest_id');
+            $table->index('dest_id');
+            // $table->timestamps();
         });
     }
 

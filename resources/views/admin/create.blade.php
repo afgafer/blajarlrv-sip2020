@@ -46,23 +46,23 @@
                         </div>
 
                         <div class="form-group row">
-                            <label for="hotel_id" class="col-md-12 col-form-label ">dest</label>
+                            <label for="dest_id" class="col-md-12 col-form-label ">dest</label>
 
                             <div class="col-md-6">
-                                <select name="dest_id" class="form-control">
-                                    <option disable selected>--choice--</option>
+                                <select name="dest_id" class="form-control @error('dest_id') is-invalid @enderror">
+                                    <option>--choice--</option>
                                     @forelse($dests as $d)
                                     <option value="{{$d->id}}">{{$d->name}}</option>
                                     @empty
-                                    <option disable selected>empty</option>
+                                    <option disabled selected>empty</option>
                                     @endforelse
                                 </select>   
 
-                                @error('email')
+                                <!-- @error('dest_id')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
-                                @enderror
+                                @enderror -->
                             </div>
                         </div>
 
@@ -70,20 +70,20 @@
                             <label for="hotel_id" class="col-md-12 col-form-label ">hotel</label>
 
                             <div class="col-md-6">
-                                <select name="hotel_id" class="form-control">
-                                    <option disable selected>--choice--</option>
+                                <select name="hotel_id" class="form-control @error('hotel_id') is-invalid @enderror">
+                                    <option>--choice--</option>
                                     @forelse($hotels as $h)
                                     <option value="{{$h->id}}">{{$h->name}}</option>
                                     @empty
-                                    <option disable selected>empty</option>
+                                    <option disabled selected>empty</option>
                                     @endforelse
                                 </select>   
 
-                                @error('email')
+                                <!-- @error('hotel_id')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
-                                @enderror
+                                @enderror -->
                             </div>
                         </div>
 

@@ -18,12 +18,38 @@ class Order extends Model
         }else if($status==1) {
             $text="processing";
         }else if($status==2) {
-            $text="abort";
+            $text="cancel";
         }else if($status==3) {
             $text="complete";
         }else if($status==4) {
-            $text="canceled";
+            $text="denied";
         }
         return $text;
+    }
+    public function getBStatus(){
+        $status=$this->status;
+        if ($status==0) {
+            $badge="<span class='badge badge-warning text-white'>pending</span>";
+        }else if($status==1) {
+            $badge="<span class='badge badge-primary'>processing</span>";
+        }else if($status==2) {
+            $badge="<span class='badge badge-danger'>cancel</span>";
+        }else if($status==3) {
+            $badge="<span class='badge badge-success'>complete</span>";
+        }else if($status==4) {
+            $badge="<span class='badge badge-danger'>reject</span>";
+        }
+        return $badge;
+    }
+    public function getCout(){
+        $date=date_create($this->cout);
+        return date_format($date,'d-m-Y');
+    }
+    public function getCin(){
+        $date=date_create($this->cin);
+        return date_format($date,'d-m-Y');
+    }
+    public function getBill(){
+        return 'Rp '.number_format($this->bill,0,'','.');
     }
 }

@@ -25,8 +25,18 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        // Gate::define('myArtikel', function ($user, $kota) {
-        //     return $user->id == $kota->user_id;
-        //     });
+        Gate::define('admin-create', function ($user,$admin) {
+            return $admin->id == 1;
+        });
+        Gate::define('admin-edit', function ($user,$admin) {
+            //dd($admin->user_id);
+            //dd($user->id);
+            if($user->id==$admin->user_id){
+                $result=true;
+            }else{
+                $result=false;
+            }
+            return $result;
+        });
     }
 }

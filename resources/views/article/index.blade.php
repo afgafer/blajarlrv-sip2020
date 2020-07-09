@@ -1,12 +1,13 @@
 @extends('layouts.app')
 @section('content')
 
+<h1 class="title">articles</h1>
+<hr>
 @if ($message = Session::get('message'))
  <div class="alert alert-success martop-sm">
  <p>{{ $message }}</p>
  </div>
 @endif
-<h1 class="title">articles</h1>
 <a href="{{route('article.create')}}" class="btn btn-primary btn-sm">create</a>
 <div class="card-columns">
             @forelse($articles as $a)
@@ -21,31 +22,22 @@
                 <a class="text-dark" href="{{route('article.show',$a->id)}}">
                 <img src="{{$src}}" class="card-img-top" alt="{{$a->file}}">
                 <div class="card-body">
-                    <table class="table table-sm bg-white mb-2 ">
-                        <tbody>
-                            <tr>
-                                <td >title</td>
-                                <td>: {{$a->title}}</td>
-                            </tr>
-                            <tr>
-                                <td>writer</td>
-                                <td>: {{$a->admin->name}}</td>
-                            </tr>
-                            <tr>
-                                <td>date</td>
-                                <td>: {{$date}}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <?=$content?>
+                    <h5>{{$a->title}}</h5>
+                    <div>
+                        <span class="badge badge-primary">{{$a->admin->name}}</span><span class="badge badge-secondary">{{$date}}</span>
+                    </div>
+                    <div>
+                        <?=$content?>
+                        ...
+                    </div>
                     <div class="btn-group">
-                        <a href="{{route('article.show',$a->id)}}" class="btn btn-info btn-sm mr-1">read more</a>
                         <a href="{{route('article.edit',$a->id)}}" class="btn btn-primary btn-sm mr-1">edit</a>
                         <form action="{{route('article.destroy',$a->id)}}" method="post">
                         @csrf
                         @method('DELETE')
                             <button class="btn btn-danger btn-sm mr-1" type="submit">delete</button>
                         </form>
+                        <a href="{{route('article.showA',$a->id)}}" class="btn btn-light btn-outline-primary btn-sm">read more >></a>
                     </div>
                 </div>
                 </a>

@@ -15,19 +15,21 @@ class CreateOrdersTable extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->char('invoice',12);
             //$table->unsignedBigInteger('admin_id');
             $table->unsignedBigInteger('member_id');
             $table->index('member_id');
             $table->unsignedBigInteger('hotel_id');
             $table->index('hotel_id');
             $table->string('name',33);
+            $table->char('contact',12);
             $table->date('cin');
             $table->date('cout');
             //$table->integer('duration');
             $table->integer('count');
             $table->integer('bill');
             $table->enum('status',[0,1,2,3,4]);
-            $table->string('file',100)->nullable();
+            $table->string('file')->nullable();
             //$table->foreign('id_kamar')->references('id')->on('kamar')->onUpdate('cascade')->onDelete('restrict');
             //$table->foreign('id_anggota')->references('id')->on('anggota')->onUpdate('cascade')->onDelete('restrict');
             $table->timestamps();

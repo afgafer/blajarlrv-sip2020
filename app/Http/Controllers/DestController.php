@@ -16,8 +16,7 @@ class DestController extends Controller
      */
     public function index()
     {
-        $dest_id=Auth()->user()->admin->dest_id;
-        $dests=Dest::where('id',$dest_id)->get();
+        $dests=Dest::get();
         return view('dest.index',compact('dests'));
     }
 
@@ -39,6 +38,15 @@ class DestController extends Controller
      */
     public function store(Request $request)
     {
+        $this->validate($request,[
+            'name' => ['required', 'string', 'max:255'],
+            'file' => 'required|file|image|mimes:jpeg,png,gif,webp',
+            'contact' => ['required', 'string', 'size:12'], 
+            'address' => 'required',
+            'desc' => 'required',
+            'lat'=>['numeric','nullable'],
+            'lng'=>'nullable|numeric',
+        ]);
         $dest=new Dest();
         $dest->name=$request->name;
         $file=$request->file;
@@ -67,9 +75,9 @@ class DestController extends Controller
     public function show($id)
     {
         $dest=Dest::findOrFail($id);
-         $where="dest_id=".$id;
+         $where="admins.dest_id=".$id;
          $hotels= DB::table('hotels')->selectRaw('hotels.*')->
-         join('admins','hotels.id','admins.id')->whereRaw($where)
+         join('admins','hotels.id','admins.hotel_id')->whereRaw($where)
          ->groupBy('hotels.id')->get();
         return view('dest.show',compact('dest','hotels'));
     }
@@ -95,6 +103,15 @@ class DestController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $this->validate($request,[
+            'name' => ['required', 'string', 'max:255'],
+            'file' => 'file|image|mimes:jpeg,png,gif,webp',
+            'contact' => ['required', 'string', 'size:12'], 
+            'address' => 'required',
+            'desc' => 'required',
+            'lat'=>['numeric','nullable'],
+            'lng'=>'nullable|numeric',
+        ]);
         $dest=Dest::findOrFail($id);
         $dest->name=$request->name;
         $file=$request->file;
@@ -139,6 +156,7 @@ class DestController extends Controller
     }
 
     public function map(){
-        return view('auth.dest.map');
+        $dests=Dest::get();
+        return view('auth.dest.map',compact('dests'));
     }
 }

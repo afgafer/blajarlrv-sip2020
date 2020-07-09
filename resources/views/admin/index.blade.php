@@ -7,12 +7,12 @@
  </div>
 @endif
 
-<h1 class="text-center">admins</h1>
+<h1 class="title">admins</h1>
 <a href="{{route('admin.create')}}" class="btn btn-primary btn-sm">create</a>
 <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-xl">
                                 Launch demo modal
                             </button>
- <div class="modal fade bd-example-modal-xl" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade bd-example-modal-xl" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
  <!--modal -->
   <div class="modal-dialog modal-xl" role="document">
     <div class="modal-content p-2">
@@ -152,18 +152,19 @@
             <tr>
                 <td>{{$loop->iteration}}</td>
                 <td>
-                    <img src="{{$src}}" alt="{{$a->file}}" class="img-thumbnail">
+                    <img src="{{$src}}" alt="{{$a->file}}" class="img-thumbail img-s">
                     <a href="{{route('admin.show',$a->id)}}">{{$a->name}}</a>
                 </td>
                 <td>{{$a->email}}</td>
-                <td><td>{{$a->dest->name}} / {{$a->hotel->name}}</td>
                 <td>
-                    <a href="{{route('admin.edit',$a->email)}}" class="btn btn-primary btn-sm">edit</a>
+                <div class="btn-group">
+                    <a href="{{route('admin.edit',$a->user->id)}}" class="btn btn-primary btn-sm mr-1">edit</a>
                     <form action="{{route('admin.destroy',$a->id)}}" method="post">
                     @csrf
                     @method('DELETE')
                         <button type="submit" class="btn btn-danger btn-sm">delete</button>
                     </form>
+                    </div>
                 </td>
             </tr>
             @empty
@@ -173,5 +174,5 @@
             @endforelse
         </tbody>
     </table>
-    </div>
+</div>
 @endsection

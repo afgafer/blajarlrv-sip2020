@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\models\image;
+use App\models\Image;
 use App\models\Dest;
 use Illuminate\Http\Request;
 use File;
@@ -17,14 +17,13 @@ class ImageController extends Controller
     public function index()
     {
         $dest_id=Auth()->user()->admin->dest_id;
-        $images=Image::orderBy('created_at','DESC')->whereRaw("status='0' and dest_id=$dest_id")->get();
+        $images=Image::orderBy('created_at','DESC')->whereRaw("status='1' and dest_id=$dest_id")->get();
         return view('image.index',['images'=>$images]);
     }
 
      public function indexA()
     {
         $images=Image::where('status','=','1')->get();
-        //dd($images);
         return view('auth.image.index',['images'=>$images]);
     }
 
@@ -34,14 +33,18 @@ class ImageController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function create()
-    {
+    {   
+        $dest_id=auth()->user()->admin->dest_id;
+        $images=Image::orderBy('created_at','DESC')->whereRaw("status='0' and dest_id=$dest_id ")->get();
+
         $dests=Dest::orderBy('name','asc')->get();
-        return view('image.create',compact('dests'));
+        return view('image.create',compact('dests','images'));
     }
 
     public function createA()
     {
-        $images=Image::orderBy('created_at','DESC')->whereRaw("status!='1'")->get();
+        $id=auth()->user()->id;
+        $images=Image::orderBy('created_at','DESC')->whereRaw("status!='1' and user_id=$id ")->get();
 
         $dests=Dest::orderBy('name','asc')->get();
         return view('auth.image.create',compact('dests','images'));
@@ -58,7 +61,6 @@ class ImageController extends Controller
         $this->validate($request, [
             'name'=>'required',
             'file' => 'required|file|image|mimes:jpeg,png,gif,webp',
-            'dest_id'=>'required',
             'desc'=>'required',   
         ]);
 
@@ -71,14 +73,18 @@ class ImageController extends Controller
             $image->file=$nameF;
         }
         $image->desc=$request->desc;
-        $image->status='0';
+        if(auth()->user()->type==1){
+            $image->status='1';
+        }else{
+            $image->status='0';
+        }
+        $image->dest_id=auth()->user()->admin->dest_id;
         $image->user_id=auth()->user()->id;
-        $image->dest_id=$request->dest_id;
         $image->save();
         $msg="The image ".$image->name." has been stored";
 
-        return redirect()->route('image.create')
-                ->with('message',$msg);
+        return redirect()->route('image.index')
+        ->with('message',$msg);
     }
 
 
@@ -90,7 +96,8 @@ class ImageController extends Controller
      */
     public function show($id)
     {
-        //
+        $image=Image::findOrFail($id);
+        return view('image.show',compact('image'));
     }
 
     /**
@@ -116,8 +123,7 @@ class ImageController extends Controller
     {   
         $this->validate($request,[
             'name'=>'required',
-            'file' => 'required|file|image|mimes:jpeg,png,gif,webp',
-            'dest_id'=>'required',
+            'file' => 'file|image|mimes:jpeg,png,gif,webp',
             'desc'=>'required',
         ]);
         $image=Image::findOrFail($id);
@@ -131,13 +137,11 @@ class ImageController extends Controller
             $image->file=$nameF;
         }
         $image->desc=$request->desc;
-        $image->status='0';
         $image->user_id=auth()->user()->id;
-        $image->dest_id=$request->dest_id;
         $image->save();
         $msg="The image ".$image->name." has been stored";
-        return redirect()->route('image.indexA')
-                ->with('message',$msg);
+        return redirect()->route('image.index')
+        ->with('message',$msg);
     }
 
     /**

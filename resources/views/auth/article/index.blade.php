@@ -1,12 +1,12 @@
 @extends('layouts.app')
 @section('content')
-
-@if ($message = Session::get('message'))
+<h1 class="title text-center">articles</h1>
+<hr>
+@if ($msg = Session::get('msg'))
  <div class="alert alert-success martop-sm">
- <p>{{ $message }}</p>
+ <p>{{ $msg }}</p>
  </div>
 @endif
-<h1 class="title">articles</h1>
 <div class="card-columns">
             @forelse($articles as $a)
             @php
@@ -20,25 +20,13 @@
                 <a class="text-dark" href="{{route('article.showA',$a->id)}}">
                 <img src="{{$src}}" class="card-img-top" alt="{{$a->file}}">
                 <div class="card-body">
-                    <table class="table table-sm bg-white mb-2 ">
-                        <tbody>
-                            <tr>
-                                <td >title</td>
-                                <td>: {{$a->title}}</td>
-                            </tr>
-                            <tr>
-                                <td>writer</td>
-                                <td>: {{$a->admin->name}}</td>
-                            </tr>
-                            <tr>
-                                <td>date</td>
-                                <td>: {{$date}}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <?=$content?>
+                    <h5>{{$a->title}}</h5>
                     <div>
-                        <a href="{{route('article.showA',$a->id)}}" class="btn btn-outline-primary btn-sm">read more >></a>
+                        <span class="badge badge-primary">{{$a->admin->name}}</span><span class="badge badge-secondary">{{$date}}</span>
+                    </div>
+                    <?=$content?>...
+                    <div>
+                        <a href="{{route('article.showA',$a->id)}}" class="btn btn-primary btn-outline-light btn-sm">read more >></a>
                     </div>
                 </div>
                 </a>

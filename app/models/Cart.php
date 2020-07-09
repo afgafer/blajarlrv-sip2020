@@ -22,13 +22,11 @@ class Cart
     public function add($item,$id,$duration)
     {   
         $sItem=['qty'=>0, 'cost'=>0, 'item'=>$item, 'duration'=>$duration];
-        //asli
         if ($this->items) {
             if (array_key_exists($id,$this->items)) {
                 $sItem=$this->items[$id];
             }
         }
-        //dd($item->quota);
         if ($sItem['qty']<$item->quota) {
             $sItem['qty']++;
             $sItem['cost']+=$item->price * $duration;
@@ -70,9 +68,9 @@ class Cart
     }
     public function rOne($id,$duration){
         $this->items[$id]['qty']--;
-        $this->items[$id]['cost']-=$this->items[$id]['item']->price * 6;
+        $this->items[$id]['cost']-=$this->items[$id]['item']->price * $duration;
         $this->tQty--;
-        $this->tPrice-=$this->items[$id]['item']->price * 6;
+        $this->tPrice-=$this->items[$id]['item']->price * $duration;
         if ($this->items[$id]['qty']<=0) {
             unset($this->items[$id]);
         }

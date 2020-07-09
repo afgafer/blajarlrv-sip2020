@@ -9,7 +9,7 @@ use Illuminate\Notifications\Notifiable;
 class User extends Authenticatable
 {
     use Notifiable;
-
+    public $timestamps = false;
     /**
      * The attributes that are mass assignable.
      *
@@ -38,10 +38,10 @@ class User extends Authenticatable
     ];
 
     public function admin(){
-        return $this->hasOne('App\models\Admin','email','email');
+        return $this->hasOne('App\models\Admin','user_id');
     }
     public function member(){
-        return $this->hasOne('App\models\Member','email','email');
+        return $this->hasOne('App\models\Member','user_id');
     }
     public function dest(){
         return $this->hasOne('App\models\Dest','admins','user_id','dest_id');

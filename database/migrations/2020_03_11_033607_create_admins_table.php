@@ -17,14 +17,14 @@ class CreateAdminsTable extends Migration
             $table->bigIncrements('id');
             $table->string('name',33);
             $table->string('file',100)->nullable();
-            $table->string('email')->unique();
+            //$table->string('email',100)->unique();
             $table->bigInteger('dest_id')->unsigned();
             $table->index('dest_id');
-            $table->bigInteger('hotel_id')->unsigned();
+            $table->bigInteger('hotel_id')->unsigned()->nullable();
             $table->index('hotel_id');
-            $table->bigInteger('user_id')->unsigned();
+            $table->bigInteger('user_id')->unsigned()->unique();
             $table->index('user_id');
-            $table->timestamps();;
+            // $table->timestamps();;
         });
     }
 

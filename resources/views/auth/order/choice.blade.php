@@ -1,30 +1,28 @@
 @extends('layouts.app')
 @section('content')
 <div class="bg-limpid-light p-2">
-            <div class="bg-light">
+            <div class="">
                 <h1 class="title">form</h1>
                 <div class="form-row p-2">
-                    <div class="form-group col-md-6">
-                        <label for="name">name</label>
-                        <input type="text" value="{{Session::get('name')}}" class="form-control" readonly>
-                    </div>
                     <div class="form-group col-md-2">
                         <label for="hotel">hotel</label>
                         <input type="text" value="{{Session::get('hotel')}}" class="form-control" readonly>
                     </div>
                     <div class="form-group col-md-2">
-                        <label for="cin">cin : 08.00</label>
+                        <label for="cin">check in :</label>
                         <input type="date"  value="{{Session::get('cin')}}" class="form-control" readonly>
+                        <strong>check in 14.00 WIB</strong>
                     </div>
                     <div class="form-group col-md-2">
-                        <label for="cout">cout : 06.00</label>
+                        <label for="cout">check out :</label>
                         <input type="date" value="{{Session::get('cout')}}" class="form-control" readonly>
+                        <strong>check out 12.00 WIB</strong>
                     </div>
                 </div>
             </div>
-<h1 class="title text-center mt-2">hotels</h1>
+<h1 class="title text-center mt-2">rooms</h1>
 <div class="card-columns">
-            @foreach($rooms as $r)
+            @forelse($rooms as $r)
             @php
             if(Session::has('cart')){
                 $cart=Session::get('cart');
@@ -50,8 +48,8 @@
                                 <td>: {{$r->name}}</td>
                             </tr>
                             <tr>
-                                <td>bed</td>
-                                <td>: {{$r->bed}}</td>
+                                <td>cap</td>
+                                <td>: {{$r->cap}}</td>
                             </tr>
                             <tr>
                                 <td>quota</td>
@@ -62,7 +60,13 @@
                 </div>
                 </a>
             </div>
-            @endforeach
+            @empty
+            <div class="card">
+                <div class="card-body">
+                    empty
+                </div>
+            </div>
+            @endforelse
         </div>
         </div>
 @endsection

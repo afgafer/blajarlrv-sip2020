@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-use App\models\Image;
+use App\models\Dest;
 use App\models\Room;
 use App\models\Hotel;
 
@@ -30,13 +30,15 @@ class HomeController extends Controller
         $type=auth()->user()->type;
         if($type==1){
             $id=auth()->user()->admin->hotel_id;
-            $images=Image::orderBy('created_at','desc')->where('status','=','1')->limit(5)->get();
-            $hotel=Hotel::findOrFail($id);
-            return view('home',compact('images','hotel'));
+            if ($id>0) {
+                $hotel=Hotel::findOrFail($id);
+                return view('home',compact('hotel'));
+            }else{
+                $dest_id=auth()->user()->admin->dest_id;
+                return redirect()->route('dest.show',$dest_id);
+            }
         }else if($type==0){
             return redirect()->route('welcome');
-        }else{
-            return "back";
         }
     }
 }

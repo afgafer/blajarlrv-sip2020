@@ -54,13 +54,6 @@
                     </table>
                 </div>
                 <div class="card-footer">
-                    <!-- <small class="text-muted row">
-                        <form action="{{ route('order.cancel', $order->id) }}" method="post">
-                            {{csrf_field()}}
-                            {{ method_field('PUT') }}
-                            <button class="btn btn-danger" type="submit">cancel</button>
-                        </form>
-                    </small> -->
                 </div>
             </div>
     <!-- boodi -->

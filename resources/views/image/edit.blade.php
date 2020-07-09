@@ -1,5 +1,7 @@
 @extends('layouts.app')
 @section('content')
+            <h1 class="title">Image</h1>
+            <hr>
             <form action="{{route('image.update',$image->id)}}" method='post' enctype="multipart/form-data">
             {{csrf_field()}}
             {{method_field('put')}}
@@ -20,7 +22,7 @@
             @endphp
                 <div class="form-group">
                     <div class="col-md-6">
-                        <img src="{{$src}}" class="img-thumbnail @error('name') is-invalid @enderror" width="100px" heigth="100px" alt="{{$image->file}}">
+                        <img src="{{$src}}" class="img-thumbnail img-m @error('name') is-invalid @enderror" alt="{{$image->file}}">
                     </div>
                 </div>
                 <div class="form-group">
@@ -33,10 +35,10 @@
                         @enderror
                     </div>
                 </div>
-                <div class="form-group">
+                <!-- <div class="form-group">
                     <div class="col-md-4">
                         <label for="dest">dest</label>
-                        <select name="dest" class="form-control @error('dest_id') is-invalid @enderror">
+                        <select name="dest_id" class="form-control @error('dest_id') is-invalid @enderror">
                             <option disabled selected>--Pilih--</option>
                             @php
                             $dests=\App\models\Dest::orderBy('name','ASC')->get();
@@ -53,7 +55,7 @@
                             </span>
                         @enderror
                     </div>
-                </div>
+                </div> -->
                 <div class="form-group">
                     <div class="col-12">
                         <label for="desc">Deskripsi</label>
@@ -65,6 +67,6 @@
                         @enderror
                     </div>
                 </div>
-                <button class="btn btn-primary" type="submit">Submit form</button>
+                <button class="btn btn-primary" type="submit">save</button>
             </form>
  @endsection

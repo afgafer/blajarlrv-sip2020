@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use File;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Gate;
 
 class AdminController extends Controller
 {
@@ -31,6 +32,13 @@ class AdminController extends Controller
      */
     public function create()
     {
+        $admin=auth()->user();
+        if (!Gate::allows('admin-create', $admin))
+        {
+            $msg=$admin->name." aren't user 1";
+            return redirect()->route('admin.index')
+                    ->with('message',$msg);
+        }
         $dests= \App\models\Dest::orderBy('name','ASC')->get();
         $hotels= \App\models\Hotel::orderBy('name','ASC')->get();
         return view('admin.create',compact('dests','hotels'));
@@ -44,12 +52,11 @@ class AdminController extends Controller
      */
     public function store(Request $request)
     {
-        $validateData=$request->validate([
+        $this->validate($request,[
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'contact' => ['required', 'string', 'size:12'], //hmm
-            'hotel_id' => ['required'],
-            'dest_id' => ['required'],
+            'dest_id' => 'required|numeric',
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
         $user=new User();
@@ -63,10 +70,10 @@ class AdminController extends Controller
         $user=User::where('email',$request->email)->first();
         $admin=new Admin();
         $admin->name=$request->name;
-        $admin->email=$request->email;
         $admin->hotel_id=$request->hotel_id;
         $admin->dest_id=$request->dest_id;
         $admin->user_id=$user->id;
+        $admin->file='default.jpg';
         $admin->save();
         $msg="The admin ".$admin->name." has been stored";
 
@@ -82,8 +89,11 @@ class AdminController extends Controller
      */
     public function show($id)
     {
-        $admin=Admin::findOrFail();
-        return view('admin.show',compact('admin'));
+        $admin=Admin::where('user_id',$id)->firstOrFail();
+        $dests= \App\models\Dest::orderBy('name','ASC')->get();
+        $hotels= \App\models\Hotel::orderBy('name','ASC')->get();
+        $admins=Admin::orderBy('dest_id','ASC')->get();
+        return view('admin.show',compact('admin','admins',"dests",'hotels'));
     }
 
     /**
@@ -93,11 +103,19 @@ class AdminController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
-    {
+    {   
+        $admin=Admin::where('user_id',$id)->first();
+        //dd($admin->user_id);
+        // //dd(auth()->user()->id);
+        if (!Gate::allows('admin-edit', $admin))
+        {
+            $msg="user ".auth()->user()->id." aren't admin ".$admin->user_id;
+            return redirect()->route('admin.index')
+            ->with('message',$msg);
+        }
         $dests= \App\models\Dest::orderBy('name','ASC')->get();
         $hotels= \App\models\Hotel::orderBy('name','ASC')->get();
-        $user=User::where('email',$id)->first();
-        return view('admin.edit',compact('dests','hotels','user'));
+        return view('admin.edit',compact('dests','hotels','admin'));
     }
 
     /**
@@ -111,32 +129,24 @@ class AdminController extends Controller
     {
         $this->validate($request,[
             'name' => ['required', 'string', 'max:255'],
-            'contact' => ['required', 'string', 'size:12'], //hmm
-            'hotel_id' => ['required'],
-            'dest_id' => ['required'],
+            'email' => 'required',
+            'contact' => ['required', 'string', 'size:12'],
+            'dest_id' => 'required|gt:0',
         ]);
-        $user=User::where('email',$id)->first();
+        $user=User::findOrFail($id);
         $user->name=$request->name;
-        $file=$request->file;
-        if($file){
-            $oldF='upload/img/'.$user->file;
-            File::delete($oldF);
-            $nameF = 'user_'.time().'.'.$file->getClientOriginalExtension();    
-            $file->move('upload/img',$nameF);
-            $user->file=$nameF;
-        }
         $user->contact=$request->contact;
         $user->type='1';
         $user->save();
 
-        $admin=Admin::where('email',$id)->first();
+        $admin=Admin::where('user_id',$id)->firstOrfail();
         $admin->name=$request->name;
         $admin->hotel_id=$request->hotel_id;
         $admin->dest_id=$request->dest_id;
         $admin->save();
         $msg="The admin ".$admin->name." has been saved";
 
-        return redirect()->route('admin.index')
+        return redirect()->route('admin.show',$id)
                 ->with('message',$msg);
     }
 
@@ -150,5 +160,22 @@ class AdminController extends Controller
     {
         $user=User::destroy($id);
         $user=User::destroy($id);
+    }
+    public function upload(Request $request,$id){
+        $this->validate($request,[
+            'file'=>'required|file|image|mimes:jpeg,png,gif,webp',
+        ]);
+        $admin=Admin::findOrFail($id);
+        $file=$request->file;
+        if ($file) {
+            $dirF='upload/img/';
+            $oldF=$dirF.$admin->file;
+            File::delete($oldF);
+            $nameF='admin_'.time().'.'.$file->getClientOriginalExtension();
+            $file->move($dirF,$nameF);
+            $admin->file=$nameF;
+        }
+        $admin->save();
+        return back()->with('msg',"Profille's photo has been upload");
     }
 }

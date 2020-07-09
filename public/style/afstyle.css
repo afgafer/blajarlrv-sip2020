@@ -1,26 +1,37 @@
+/* Mystyle */
+h1, h2, h3, h4, h5, h6, a, label, button{
+  text-transform: capitalize;
+}
+h1, h4{
+  font-weight: bold;
+}
+table, p{
+  text-transform: capitalize;
+}
 label{
   font-weight: bold;
   color: #555;
 }
 .limpid{
-  opacity:0.6;
+  opacity:0.8;
 }
 .bg-limpid-dark{
-    background-color: rgba(25,25, 25, 0.8);
+    background-color: rgba(25,25, 25, 0.9);
 }
 .bg-limpid-light{
-  background-color: rgba(255,255,255, 0.8);
-}
-.img-thumbnail{
-    height: 100px;
+  background-color: rgba(255,255,255, 0.9);
 }
 .img-s{
   height:30px;
+}
+.img-m{
+  height:100px;
 }
 .box{
   width:100%;
   position: relative;
   margin-top: 5px;
+  padding: ;
 }
 .box img{
   border-radius: 10px;
@@ -30,20 +41,31 @@ label{
   transition: .5s ease;
   position: absolute;
   text-align: center;
-  background-color: royalblue;
+  background-color: rgba(50, 50, 50, 0.7);
   width: 100%;
   bottom: 0;
-  overflow: hidden;;
+  overflow: hidden;
+  text-decoration: underline;
+}
+.overlay h5{
+  padding-top: 2px;
 }
 .box:hover .overlay{
   height: 40px;
   padding: 2px;
 }
-.card a{
-  text-decoration: none;
+.box-title{
+  position: absolute;
+  text-align: center;
+  background-color: rgba(50, 50, 50, 0.7);
+  width: 100%;
+  bottom: 0;
+  text-decoration: underline;
+  height: 40px;
+  padding: 2px;
 }
-.card-footer{
-  background-color: slategray;
+.box-title h5{
+  padding-top: 2px;
 }
 .title{
   border-left: 7px solid #444;
@@ -55,20 +77,46 @@ label{
   width:96%;
   overflow: scroll;
 }
+/* EndMyStyle */
+/* ExtendStyle */
+.bg-primary{
+  background-color: #0678BE;
+}
+.bg-blue{
+  background-color: #004D94;
+}
+.text-primary{
+  color: #0678BE;
+}
+.card a{
+  text-decoration: none;
+}
+.card-footer{
+  background-color: slategray;
+}
+.card-body table{
+  font-weight: bold;
+}
+.form-control{
+  background-color: whitesmoke;
+  border: 1px solid slategray;
+}
+/* EndExtendStyle */
+/* OtherStyle */
+
 /* The side navigation menu */
 .sidenav {
     height: 100%; /* 100% Full-height */
     width: 0; /* 0 width - change this with JavaScript */
     position: fixed; /* Stay in place */
-    z-index: 99; /* Stay on top */
+    z-index: 9999; /* Stay on top */
     top: 0; /* Stay at the top */
     left: 0;
     background-color: #111; /* Black*/
     overflow-x: hidden; /* Disable horizontal scroll */
     padding-top: 60px; /* Place content 60px from the top */
     transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
-  }
-  
+  }  
   /* The navigation menu links */
   .sidenav a {
     padding: 8px 8px 8px 32px;

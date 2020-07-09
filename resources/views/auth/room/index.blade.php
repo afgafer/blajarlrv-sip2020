@@ -1,14 +1,12 @@
 @extends('layouts.app')
 @section('content')
-@if (Session::get('message'))
-@php
-$message = Session::get('message');
-@endphp
+<h1 class="title text-center">rooms</h1>
+<hr>
+@if ($msg = Session::get('msg'))
  <div class="alert alert-success martop-sm">
- <p>{{ $message }}</p>
+ <p>{{ $msg }}</p>
  </div>
 @endif
-<h1 class="bg-secondary text-white text-center">rooms</h1>
 <div class="card-columns">
             @forelse($rooms as $r)
             @php
@@ -22,27 +20,25 @@ $message = Session::get('message');
             $src=asset($dirF);
             $price=number_format($r->price,0,',','.')
             @endphp
-            <div class="card p-0">
+            <div class="card p-0 ">
                 <a class="text-dark" href="{{route('room.showA',$r->id)}}">
                 <img src="{{$src}}" class="card-img-top" alt="{{$r->file}}">
                 <div class="card-body">
                     <h5 class="card-title text-white badge badge-primary">No {{$r->id}}</h5>
                     <h5 class="card-title border badge badge-light">Rp {{$r->price}}</h5>
-                    <table class="table table-sm bg-white mb-2 ">
-                        <tbody>
+                    <table class="table table-sm mb-2 font-weight-bold">
                             <tr>
                                 <td >Name</td>
                                 <td>: {{$r->name}}</td>
                             </tr>
                             <tr>
+                                <td>cap</td>
+                                <td>: {{$r->cap}}</td>
+                            </tr>
+                            <tr>
                                 <td>hotel</td>
                                 <td>: {{$r->hotel->name}}</td>
                             </tr>
-                            <tr>
-                                <td>bed</td>
-                                <td>: {{$r->bed}}</td>
-                            </tr>
-                        </tbody>
                     </table>
                 </div>
                 </a>
